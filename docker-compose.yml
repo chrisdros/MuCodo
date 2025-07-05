@@ -1,0 +1,13 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      # Für die Entwicklung: Änderungen an main.py und static/ Dateien werden live übernommen
+      - ./main.py:/app/main.py
+      - ./static/:/app/static/
+    restart: unless-stopped

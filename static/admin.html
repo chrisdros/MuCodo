@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="manifest" href="manifest.webmanifest">
+</head>
+<body class="admin-active">
+    <div id="admin-page">
+        <h2>Gesamtzeit</h2>
+        <div class="input-group">
+            <div class="arrow-buttons">
+                <button data-action="add-minutes-10">↑↑</button>
+                <button data-action="add-minutes-1">↑</button>
+            </div>
+            <input type="number" id="minutes-input" value="0" min="0">
+            <div class="arrow-buttons">
+                <button data-action="sub-minutes-10">↓↓</button>
+                <button data-action="sub-minutes-1">↓</button>
+            </div>
+            <span>Minuten</span>
+        </div>
+        <div class="input-group">
+            <div class="arrow-buttons">
+                <button data-action="add-seconds-10">↑↑</button>
+                <button data-action="add-seconds-1">↑</button>
+            </div>
+            <input type="number" id="seconds-input" value="0" min="0" max="59">
+            <div class="arrow-buttons">
+                <button data-action="sub-seconds-10">↓↓</button>
+                <button data-action="sub-seconds-1">↓</button>
+            </div>
+            <span>Sekunden</span>
+        </div>
+
+        <div class="time-list-container">
+            <h3>Vordefinierte Zeiten</h3>
+            <ul id="predefined-times-list" class="time-list">
+                </ul>
+        </div>
+
+        <p><strong>Restzeit:</strong> <span id="current-remaining-time">00:00.0</span></p>
+
+        <div class="change-time-list-container">
+            <h3>Änderungszeiten</h3>
+            <ul id="change-times-list" class="change-time-list">
+                </ul>
+        </div>
+
+        <button id="play-pause-button"></button>
+    </div>
+
+    <nav>
+        <a href="index.html">Countdown-Seite</a>
+    </nav>
+
+    <script src="/static/script.js"></script>
+</body>
+</html><!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="manifest" href="/static/manifest.webmanifest">
+</head>
+<body class="admin-active">
+    <div id="admin-page-container">
+        <h2>Administration</h2>
+        <div class="admin-grid">
+            <div class="grid-column left-column">
+                <div class="section-box">
+                    <h3>Gesamtzeit</h3>
+                    <div class="input-group">
+                        <div class="arrow-buttons">
+                            <button data-action="add-minutes-10">↑↑</button>
+                            <button data-action="add-minutes-1">↑</button>
+                        </div>
+                        <input type="number" id="minutes-input" value="0" min="0">
+                        <div class="arrow-buttons">
+                            <button data-action="sub-minutes-10">↓↓</button>
+                            <button data-action="sub-minutes-1">↓</button>
+                        </div>
+                        <span>Minuten</span>
+                    </div>
+                    <div class="input-group">
+                        <div class="arrow-buttons">
+                            <button data-action="add-seconds-10">↑↑</button>
+                            <button data-action="add-seconds-1">↑</button>
+                        </div>
+                        <input type="number" id="seconds-input" value="0" min="0" max="59">
+                        <div class="arrow-buttons">
+                            <button data-action="sub-seconds-10">↓↓</button>
+                            <button data-action="sub-seconds-1">↓</button>
+                        </div>
+                        <span>Sekunden</span>
+                    </div>
+                </div>
+
+                <div class="section-box">
+                    <h3>Vordefinierte Zeiten</h3>
+                    <ul id="predefined-times-list" class="time-list">
+                        </ul>
+                </div>
+            </div>
+
+            <div class="grid-column middle-column">
+                <div class="section-box">
+                    <h3>Restzeit</h3>
+                    <p id="current-remaining-time">00:00.0</p>
+                    <button id="play-pause-button"></button>
+                </div>
+
+                <div class="section-box">
+                    <h3>Änderungszeiten</h3>
+                    <ul id="change-times-list" class="change-time-list">
+                        </ul>
+                </div>
+            </div>
+
+            <div class="grid-column right-column">
+                <div class="section-box">
+                    <h3>Namen / Projekte</h3>
+                    <ul id="names-list" class="time-list">
+                        </ul>
+                </div>
+                <div class="section-box config-management">
+                    <h3>Konfiguration verwalten</h3>
+                    <button id="download-config-btn">config.json herunterladen</button>
+                    <input type="file" id="upload-config-input" accept=".json" style="display: none;">
+                    <button id="upload-config-btn">config.json hochladen</button>
+                    <span id="upload-status-message" style="margin-left: 10px; color: green;"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <a href="/">Zur Startseite</a>
+        <a href="/countdown">Zum Countdown-Display</a>
+    </nav>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

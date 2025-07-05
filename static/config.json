@@ -1,0 +1,10 @@
+{
+  "predefinedTimes": ["0:30","1:00","2:30","4:00","5:00","6:00","8:00","106:00"],
+  "changeTimes": ["0:30","0:10","0:05","-0:05","-0:10","-0:30"] ,
+  "names": [
+    "Arndt Abel",
+    "Bernd Brugger",
+    "Christian Colewsky",
+    "Dieter Drews"
+  ]
+}

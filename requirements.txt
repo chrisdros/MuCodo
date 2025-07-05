@@ -1,0 +1,5 @@
+# requirements.txt
+# No specific packages needed for http.server, but good practice to include
+fastapi==0.111.0 # Oder die aktuellste stabile Version
+uvicorn==0.30.1  # Oder die aktuellste stabile Version
+python-multipart # Für Dateiuploads
