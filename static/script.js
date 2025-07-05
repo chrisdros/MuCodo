@@ -125,10 +125,10 @@ function renderConfigLists() {
     // Render Predefined Times
     if (predefinedTimesList) {
         predefinedTimesList.innerHTML = '';
-        (config.predefinedTimes || []).forEach(timeString => { // timeString is like "0:30"
+        (config.predefinedTimes || []).forEach(timeString => {
             const listItem = document.createElement('li');
             const button = document.createElement('button');
-            button.textContent = timeString; // Display the string as is
+            button.textContent = timeString;
             const timeInTenths = parseTimeStringToTenths(timeString);
             button.addEventListener('click', () => {
                 totalTime = timeInTenths;
@@ -145,10 +145,10 @@ function renderConfigLists() {
     // Render Change Times
     if (changeTimesList) {
         changeTimesList.innerHTML = '';
-        (config.changeTimes || []).forEach(changeString => { // changeString is like "0:30" or "-0:30"
+        (config.changeTimes || []).forEach(changeString => {
             const listItem = document.createElement('li');
             const button = document.createElement('button');
-            button.textContent = changeString; // Display the string as is
+            button.textContent = changeString;
             const changeInTenths = parseTimeStringToTenths(changeString);
             button.addEventListener('click', () => applyChangeTime(changeInTenths));
             listItem.appendChild(button);
@@ -198,7 +198,6 @@ function selectName(name) {
         selectedButton.classList.add('selected');
     }
 }
-
 
 function applyChangeTime(changeTenths) {
     if (!selectedConfigName || selectedConfigName === 'Neutral') {
@@ -277,8 +276,8 @@ function updateAdminInputs() {
     const minutesInput = document.getElementById('minutes-input');
     const secondsInput = document.getElementById('seconds-input');
     if (minutesInput && secondsInput) {
-        minutesInput.value = Math.floor(totalTime / 600);
-        secondsInput.value = Math.floor((totalTime % 600) / 10);
+        minutesInput.value = String(Math.floor(totalTime / 600)).padStart(2, '0'); // Pad with leading zero
+        secondsInput.value = String(Math.floor((totalTime % 600) / 10)).padStart(2, '0'); // Pad with leading zero
     }
 }
 
@@ -290,7 +289,7 @@ function handleInputChanges() {
         const newTotal = parseTimeToTenths(minutesInput.value, secondsInput.value);
         if (newTotal !== totalTime) {
             totalTime = newTotal;
-            remainingTime = newTotal;
+            remainingTime = newTotal; // Reset remaining to new total
             updateLocalStorageTimes();
             updateDisplay();
         }
@@ -298,11 +297,18 @@ function handleInputChanges() {
 }
 
 function setupArrowButtons() {
-    document.querySelectorAll('.arrow-buttons button').forEach(button => {
+    document.querySelectorAll('.arrow-buttons-vertical button').forEach(button => {
         button.addEventListener('click', function() {
             const action = this.dataset.action;
             let currentMinutes = parseInt(document.getElementById('minutes-input').value);
             let currentSeconds = parseInt(document.getElementById('seconds-input').value);
+
+            // Temporarily enable inputs for change
+            const minutesInput = document.getElementById('minutes-input');
+            const secondsInput = document.getElementById('seconds-input');
+            minutesInput.readOnly = false;
+            secondsInput.readOnly = false;
+
 
             switch(action) {
                 case 'add-minutes-10': currentMinutes += 10; break;
@@ -315,22 +321,73 @@ function setupArrowButtons() {
                 case 'sub-seconds-1': currentSeconds = Math.max(0, currentSeconds - 1); break;
             }
 
+            // Handle overflow/underflow for seconds
             if (currentSeconds >= 60) {
                 currentMinutes += Math.floor(currentSeconds / 60);
                 currentSeconds %= 60;
             } else if (currentSeconds < 0) {
-                const minutesToSubtract = Math.ceil(Math.abs(currentSeconds) / 60);
-                currentMinutes = Math.max(0, currentMinutes - minutesToSubtract);
-                currentSeconds = 60 - (Math.abs(currentSeconds) % 60);
-                if (currentSeconds === 60) currentSeconds = 0;
+                // To handle cases like -5 seconds from 0 seconds (becomes -1 minute 55 seconds)
+                const totalCurrentSeconds = currentMinutes * 60 + currentSeconds;
+                if (totalCurrentSeconds < 0) {
+                    currentMinutes = 0;
+                    currentSeconds = 0;
+                } else {
+                    currentMinutes = Math.floor(totalCurrentSeconds / 60);
+                    currentSeconds = totalCurrentSeconds % 60;
+                }
             }
 
-            document.getElementById('minutes-input').value = currentMinutes;
-            document.getElementById('seconds-input').value = currentSeconds;
-            handleInputChanges();
+            document.getElementById('minutes-input').value = String(currentMinutes).padStart(2, '0');
+            document.getElementById('seconds-input').value = String(currentSeconds).padStart(2, '0');
+            handleInputChanges(); // This will also save to local storage and update display
+
+            // Re-enable readonly after a short delay (for visual feedback)
+            setTimeout(() => {
+                minutesInput.readOnly = true;
+                secondsInput.readOnly = true;
+            }, 100);
         });
     });
 }
+
+function setupTotalTimeEditableOnClick() {
+    const minutesInput = document.getElementById('minutes-input');
+    const secondsInput = document.getElementById('seconds-input');
+
+    const toggleReadOnly = (inputElement, enable) => {
+        inputElement.readOnly = !enable;
+        if (enable) {
+            inputElement.focus();
+            inputElement.select(); // Select content for easy editing
+        }
+    };
+
+    minutesInput.addEventListener('click', () => toggleReadOnly(minutesInput, true));
+    secondsInput.addEventListener('click', () => toggleReadOnly(secondsInput, true));
+
+    // When focus leaves, disable readonly and update changes
+    minutesInput.addEventListener('blur', () => {
+        toggleReadOnly(minutesInput, false);
+        handleInputChanges();
+    });
+    secondsInput.addEventListener('blur', () => {
+        toggleReadOnly(secondsInput, false);
+        handleInputChanges();
+    });
+
+    // Handle Enter key to confirm changes
+    minutesInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            minutesInput.blur();
+        }
+    });
+    secondsInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            secondsInput.blur();
+        }
+    });
+}
+
 
 function updatePlayPauseButton() {
     const playPauseButton = document.getElementById('play-pause-button');
@@ -356,6 +413,39 @@ function setupPlayPauseButton() {
     }
 }
 
+function setupAdjustTimeButtons() {
+    const adjustMinusButton = document.getElementById('adjust-time-minus-5s');
+    const adjustPlusButton = document.getElementById('adjust-time-plus-5s');
+
+    if (adjustMinusButton) {
+        adjustMinusButton.addEventListener('click', () => {
+            if (!selectedConfigName || selectedConfigName === 'Neutral') {
+                alert('Bitte wählen Sie zuerst einen Namen / Projekt aus, um Zeiten anzupassen.');
+                return;
+            }
+            remainingTime = Math.max(0, remainingTime - 50); // -5 seconds in tenths
+            updateLocalStorageTimes();
+            updateDisplay();
+        });
+    }
+
+    if (adjustPlusButton) {
+        adjustPlusButton.addEventListener('click', () => {
+            if (!selectedConfigName || selectedConfigName === 'Neutral') {
+                alert('Bitte wählen Sie zuerst einen Namen / Projekt aus, um Zeiten anzupassen.');
+                return;
+            }
+            remainingTime = Math.max(0, remainingTime + 50); // +5 seconds in tenths
+            // Ensure remainingTime does not exceed totalTime if totalTime is smaller
+            if (remainingTime > totalTime) remainingTime = totalTime;
+
+            updateLocalStorageTimes();
+            updateDisplay();
+        });
+    }
+}
+
+
 // --- Initialization ---
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -373,11 +463,15 @@ document.addEventListener('DOMContentLoaded', () => {
         updateAdminInputs();
         updateDisplay();
         setupArrowButtons();
+        setupTotalTimeEditableOnClick(); // New setup for editable total time
         setupPlayPauseButton();
+        setupAdjustTimeButtons(); // New setup for adjust time buttons
         updatePlayPauseButton();
 
-        document.getElementById('minutes-input')?.addEventListener('input', handleInputChanges);
-        document.getElementById('seconds-input')?.addEventListener('input', handleInputChanges);
+        // Note: Input change handlers are now managed by setupTotalTimeEditableOnClick's blur/keydown
+        // No longer need direct listeners here for minutes/seconds input
+        // document.getElementById('minutes-input')?.addEventListener('input', handleInputChanges);
+        // document.getElementById('seconds-input')?.addEventListener('input', handleInputChanges);
 
         const downloadConfigBtn = document.getElementById('download-config-btn');
         const uploadConfigBtn = document.getElementById('upload-config-btn');

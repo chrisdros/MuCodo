@@ -5,66 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin</title>
     <link rel="stylesheet" href="/static/style.css">
-    <link rel="manifest" href="manifest.webmanifest">
-</head>
-<body class="admin-active">
-    <div id="admin-page">
-        <h2>Gesamtzeit</h2>
-        <div class="input-group">
-            <div class="arrow-buttons">
-                <button data-action="add-minutes-10">↑↑</button>
-                <button data-action="add-minutes-1">↑</button>
-            </div>
-            <input type="number" id="minutes-input" value="0" min="0">
-            <div class="arrow-buttons">
-                <button data-action="sub-minutes-10">↓↓</button>
-                <button data-action="sub-minutes-1">↓</button>
-            </div>
-            <span>Minuten</span>
-        </div>
-        <div class="input-group">
-            <div class="arrow-buttons">
-                <button data-action="add-seconds-10">↑↑</button>
-                <button data-action="add-seconds-1">↑</button>
-            </div>
-            <input type="number" id="seconds-input" value="0" min="0" max="59">
-            <div class="arrow-buttons">
-                <button data-action="sub-seconds-10">↓↓</button>
-                <button data-action="sub-seconds-1">↓</button>
-            </div>
-            <span>Sekunden</span>
-        </div>
-
-        <div class="time-list-container">
-            <h3>Vordefinierte Zeiten</h3>
-            <ul id="predefined-times-list" class="time-list">
-                </ul>
-        </div>
-
-        <p><strong>Restzeit:</strong> <span id="current-remaining-time">00:00.0</span></p>
-
-        <div class="change-time-list-container">
-            <h3>Änderungszeiten</h3>
-            <ul id="change-times-list" class="change-time-list">
-                </ul>
-        </div>
-
-        <button id="play-pause-button"></button>
-    </div>
-
-    <nav>
-        <a href="index.html">Countdown-Seite</a>
-    </nav>
-
-    <script src="/static/script.js"></script>
-</body>
-</html><!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin</title>
-    <link rel="stylesheet" href="/static/style.css">
     <link rel="manifest" href="/static/manifest.webmanifest">
 </head>
 <body class="admin-active">
@@ -74,30 +14,32 @@
             <div class="grid-column left-column">
                 <div class="section-box">
                     <h3>Gesamtzeit</h3>
-                    <div class="input-group">
-                        <div class="arrow-buttons">
-                            <button data-action="add-minutes-10">↑↑</button>
-                            <button data-action="add-minutes-1">↑</button>
+                    <div class="total-time-input-display">
+                        <div class="input-container">
+                            <div class="arrow-buttons-vertical">
+                                <button data-action="add-minutes-10">▲▲</button>
+                                <button data-action="add-minutes-1">▲</button>
+                            </div>
+                            <input type="number" id="minutes-input" value="0" min="0" class="time-digit-input" readonly>
+                            <div class="arrow-buttons-vertical">
+                                <button data-action="sub-minutes-1">▼</button>
+                                <button data-action="sub-minutes-10">▼▼</button>
+                            </div>
                         </div>
-                        <input type="number" id="minutes-input" value="0" min="0">
-                        <div class="arrow-buttons">
-                            <button data-action="sub-minutes-10">↓↓</button>
-                            <button data-action="sub-minutes-1">↓</button>
+                        <span class="time-colon">:</span>
+                        <div class="input-container">
+                            <div class="arrow-buttons-vertical">
+                                <button data-action="add-seconds-10">▲▲</button>
+                                <button data-action="add-seconds-1">▲</button>
+                            </div>
+                            <input type="number" id="seconds-input" value="0" min="0" max="59" class="time-digit-input" readonly>
+                            <div class="arrow-buttons-vertical">
+                                <button data-action="sub-seconds-1">▼</button>
+                                <button data-action="sub-seconds-10">▼▼</button>
+                            </div>
                         </div>
-                        <span>Minuten</span>
                     </div>
-                    <div class="input-group">
-                        <div class="arrow-buttons">
-                            <button data-action="add-seconds-10">↑↑</button>
-                            <button data-action="add-seconds-1">↑</button>
-                        </div>
-                        <input type="number" id="seconds-input" value="0" min="0" max="59">
-                        <div class="arrow-buttons">
-                            <button data-action="sub-seconds-10">↓↓</button>
-                            <button data-action="sub-seconds-1">↓</button>
-                        </div>
-                        <span>Sekunden</span>
-                    </div>
+                    <p class="edit-hint">Klicken Sie auf die Ziffern, um sie zu bearbeiten.</p>
                 </div>
 
                 <div class="section-box">
@@ -111,7 +53,11 @@
                 <div class="section-box">
                     <h3>Restzeit</h3>
                     <p id="current-remaining-time">00:00.0</p>
-                    <button id="play-pause-button"></button>
+                    <div class="countdown-control-buttons">
+                        <button id="adjust-time-minus-5s" class="small-arrow-button">◀</button>
+                        <button id="play-pause-button"></button>
+                        <button id="adjust-time-plus-5s" class="small-arrow-button">▶</button>
+                    </div>
                 </div>
 
                 <div class="section-box">
