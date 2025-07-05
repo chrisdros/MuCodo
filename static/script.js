@@ -11,8 +11,8 @@ if ('serviceWorker' in navigator) {
 }
 
 // Global Variables
-let countdownInterval;
-let displayUpdateInterval; // Unified interval for display updates
+let countdownInterval; // Timer for the actual countdown logic (on admin page)
+let adminDisplayInterval; // Timer for updating the admin page's display
 let remainingTime = 0; // in tenths of a second
 let totalTime = 0; // in tenths of a second
 let isRunning = false;
@@ -193,7 +193,7 @@ function selectName(name) {
 
 // --- Display Update Logic (for both Admin and Countdown Display pages) ---
 function updateDisplay() {
-    // IMPORTANT: Re-load latest values from localStorage before updating display
+    // Re-load latest values from localStorage before updating display
     // This ensures that all tabs/windows get the most current state from localStorage.
     loadTimesFromLocalStorage();
     selectedConfigName = localStorage.getItem('selected_config_name') || 'Neutral'; // Ensure name is also current
@@ -432,15 +432,14 @@ function setupAdjustTimeButtons() {
 // --- Initialization ---
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initial load and display update for all pages
-    updateDisplay(); // Calls loadTimesFromLocalStorage() internally now
-
-    // Set up display update interval for all relevant pages
-    // This interval will continuously update the displayed time and progress bar
-    displayUpdateInterval = setInterval(updateDisplay, 100);
-
+    // Initial display update for all pages
+    // This calls loadTimesFromLocalStorage() internally now to get initial state.
+    updateDisplay();
 
     if (document.body.classList.contains('admin-active')) {
+        // On admin page, set up a display update interval for its own UI
+        adminDisplayInterval = setInterval(updateDisplay, 100);
+
         loadConfig();
         updateAdminInputs();
         setupArrowButtons();
@@ -504,13 +503,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
+    } else if (document.body.classList.contains('countdown-display-active')) {
+        // On countdown page, listen for storage events from other tabs/windows
+        window.addEventListener('storage', updateDisplay);
     }
 });
 
 window.addEventListener('beforeunload', () => {
-    // Only save isRunning state if on the admin page, as it's the controlling page
+    // Only save isRunning state and clear admin's specific interval
     if (document.body.classList.contains('admin-active')) {
         localStorage.setItem('isRunning', isRunning);
+        clearInterval(adminDisplayInterval); // Clear admin's display interval
     }
-    clearInterval(displayUpdateInterval); // Clear interval when leaving page
+    // The storage event listener for the countdown page does not need to be explicitly removed
+    // on unload for this purpose.
 });
