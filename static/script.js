@@ -12,7 +12,7 @@ if ('serviceWorker' in navigator) {
 
 // Global Variables
 let countdownInterval;
-let displayUpdateInterval;
+let displayUpdateInterval; // Unified interval for display updates
 let remainingTime = 0; // in tenths of a second
 let totalTime = 0; // in tenths of a second
 let isRunning = false;
@@ -110,7 +110,7 @@ async function loadConfig() {
         // Fallback or default config if loading fails
         config = {
             "predefinedTimes": ["0:30","1:00","2:30"],
-            "changeTimes": ["0:30","-0:30"],
+            "changeTimes": [], // Change: No changeTimes
             "names": ["Projekt A", "Projekt B"]
         };
         renderConfigLists();
@@ -119,13 +119,17 @@ async function loadConfig() {
 
 function renderConfigLists() {
     const predefinedTimesList = document.getElementById('predefined-times-list');
-    const changeTimesList = document.getElementById('change-times-list');
     const namesList = document.getElementById('names-list');
 
     // Render Predefined Times
     if (predefinedTimesList) {
         predefinedTimesList.innerHTML = '';
-        (config.predefinedTimes || []).forEach(timeString => {
+        // Sort predefined times numerically before rendering
+        const sortedTimes = (config.predefinedTimes || []).slice().sort((a, b) => {
+            return parseTimeStringToTenths(a) - parseTimeStringToTenths(b);
+        });
+
+        sortedTimes.forEach(timeString => {
             const listItem = document.createElement('li');
             const button = document.createElement('button');
             button.textContent = timeString;
@@ -135,24 +139,10 @@ function renderConfigLists() {
                 remainingTime = timeInTenths;
                 updateLocalStorageTimes();
                 updateAdminInputs();
-                updateDisplay();
+                updateDisplay(); // Trigger display update after setting time
             });
             listItem.appendChild(button);
             predefinedTimesList.appendChild(listItem);
-        });
-    }
-
-    // Render Change Times
-    if (changeTimesList) {
-        changeTimesList.innerHTML = '';
-        (config.changeTimes || []).forEach(changeString => {
-            const listItem = document.createElement('li');
-            const button = document.createElement('button');
-            button.textContent = changeString;
-            const changeInTenths = parseTimeStringToTenths(changeString);
-            button.addEventListener('click', () => applyChangeTime(changeInTenths));
-            listItem.appendChild(button);
-            changeTimesList.appendChild(listItem);
         });
     }
 
@@ -197,33 +187,21 @@ function selectName(name) {
     if (selectedButton) {
         selectedButton.classList.add('selected');
     }
+    updateDisplay(); // Update display to show new selected name
 }
 
-function applyChangeTime(changeTenths) {
-    if (!selectedConfigName || selectedConfigName === 'Neutral') {
-        alert('Bitte wählen Sie zuerst einen Namen / Projekt aus, um Zeiten zu ändern.');
-        return;
-    }
-
-    remainingTime += changeTenths;
-    if (remainingTime < 0) remainingTime = 0;
-
-    totalTime += changeTenths;
-    if (totalTime < 0) totalTime = 0;
-
-    if (remainingTime > totalTime) remainingTime = totalTime;
-
-    updateLocalStorageTimes();
-    if (document.body.classList.contains('admin-active')) {
-        updateAdminInputs();
-    }
-    updateDisplay();
-}
 
 // --- Display Update Logic (for both Admin and Countdown Display pages) ---
 function updateDisplay() {
+    // IMPORTANT: Re-load latest values from localStorage before updating display
+    // This ensures that all tabs/windows get the most current state from localStorage.
+    loadTimesFromLocalStorage();
+    selectedConfigName = localStorage.getItem('selected_config_name') || 'Neutral'; // Ensure name is also current
+
     const countdownDisplayDiv = document.getElementById('countdown-display');
     const progressBarDisplay = document.getElementById('progress-bar-display');
+    const currentRemainingTimeSpan = document.getElementById('current-remaining-time');
+    const currentNameDisplay = document.getElementById('current-name-display'); // Element for name on countdown page
 
     if (countdownDisplayDiv) {
         countdownDisplayDiv.textContent = formatTimeWithoutTenths(remainingTime);
@@ -235,9 +213,14 @@ function updateDisplay() {
         progressBarDisplay.style.width = '0%';
     }
 
-    const currentRemainingTimeSpan = document.getElementById('current-remaining-time');
+    // Always update remaining time on admin page if the element exists
     if (currentRemainingTimeSpan) {
         currentRemainingTimeSpan.textContent = formatTime(remainingTime);
+    }
+
+    // Update the selected name on the countdown display page
+    if (currentNameDisplay) {
+        currentNameDisplay.textContent = selectedConfigName;
     }
 }
 
@@ -276,8 +259,8 @@ function updateAdminInputs() {
     const minutesInput = document.getElementById('minutes-input');
     const secondsInput = document.getElementById('seconds-input');
     if (minutesInput && secondsInput) {
-        minutesInput.value = String(Math.floor(totalTime / 600)).padStart(2, '0'); // Pad with leading zero
-        secondsInput.value = String(Math.floor((totalTime % 600) / 10)).padStart(2, '0'); // Pad with leading zero
+        minutesInput.value = String(Math.floor(totalTime / 600)).padStart(2, '0');
+        secondsInput.value = String(Math.floor((totalTime % 600) / 10)).padStart(2, '0');
     }
 }
 
@@ -289,15 +272,16 @@ function handleInputChanges() {
         const newTotal = parseTimeToTenths(minutesInput.value, secondsInput.value);
         if (newTotal !== totalTime) {
             totalTime = newTotal;
-            remainingTime = newTotal; // Reset remaining to new total
+            remainingTime = newTotal;
             updateLocalStorageTimes();
-            updateDisplay();
+            updateDisplay(); // Trigger display update after setting new total time
         }
     }
 }
 
 function setupArrowButtons() {
-    document.querySelectorAll('.arrow-buttons-vertical button').forEach(button => {
+    // Select all buttons within the new arrow groups
+    document.querySelectorAll('.arrow-buttons-group-top button, .arrow-buttons-group-bottom button').forEach(button => {
         button.addEventListener('click', function() {
             const action = this.dataset.action;
             let currentMinutes = parseInt(document.getElementById('minutes-input').value);
@@ -326,7 +310,6 @@ function setupArrowButtons() {
                 currentMinutes += Math.floor(currentSeconds / 60);
                 currentSeconds %= 60;
             } else if (currentSeconds < 0) {
-                // To handle cases like -5 seconds from 0 seconds (becomes -1 minute 55 seconds)
                 const totalCurrentSeconds = currentMinutes * 60 + currentSeconds;
                 if (totalCurrentSeconds < 0) {
                     currentMinutes = 0;
@@ -449,29 +432,22 @@ function setupAdjustTimeButtons() {
 // --- Initialization ---
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadTimesFromLocalStorage();
+    // Initial load and display update for all pages
+    updateDisplay(); // Calls loadTimesFromLocalStorage() internally now
 
-    if (document.body.classList.contains('countdown-display-active')) {
-        updateDisplay();
-        displayUpdateInterval = setInterval(updateDisplay, 100);
-    } else {
-        clearInterval(displayUpdateInterval);
-    }
+    // Set up display update interval for all relevant pages
+    // This interval will continuously update the displayed time and progress bar
+    displayUpdateInterval = setInterval(updateDisplay, 100);
+
 
     if (document.body.classList.contains('admin-active')) {
         loadConfig();
         updateAdminInputs();
-        updateDisplay();
         setupArrowButtons();
-        setupTotalTimeEditableOnClick(); // New setup for editable total time
+        setupTotalTimeEditableOnClick();
         setupPlayPauseButton();
-        setupAdjustTimeButtons(); // New setup for adjust time buttons
+        setupAdjustTimeButtons();
         updatePlayPauseButton();
-
-        // Note: Input change handlers are now managed by setupTotalTimeEditableOnClick's blur/keydown
-        // No longer need direct listeners here for minutes/seconds input
-        // document.getElementById('minutes-input')?.addEventListener('input', handleInputChanges);
-        // document.getElementById('seconds-input')?.addEventListener('input', handleInputChanges);
 
         const downloadConfigBtn = document.getElementById('download-config-btn');
         const uploadConfigBtn = document.getElementById('upload-config-btn');
@@ -532,5 +508,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.addEventListener('beforeunload', () => {
-    localStorage.setItem('isRunning', isRunning);
+    // Only save isRunning state if on the admin page, as it's the controlling page
+    if (document.body.classList.contains('admin-active')) {
+        localStorage.setItem('isRunning', isRunning);
+    }
+    clearInterval(displayUpdateInterval); // Clear interval when leaving page
 });

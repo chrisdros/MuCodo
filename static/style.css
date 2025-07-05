@@ -143,6 +143,19 @@ input[type="number"] {
     overflow: hidden;
 }
 
+/* Styling for the Name Display on Countdown Page */
+#current-name-display-container {
+    text-align: center;
+    margin-bottom: 10px; /* Space between name and progress bar */
+}
+
+#current-name-display {
+    font-size: 1.8em; /* Slightly larger font for the name */
+    color: var(--color-text-dark);
+    margin: 0;
+}
+
+
 .progress-box {
     width: 100%;
     height: 80px;
@@ -215,7 +228,7 @@ input[type="number"] {
 
 .total-time-input-display .input-container {
     display: flex;
-    flex-direction: column; /* Pfeile über/unter Input */
+    flex-direction: column; /* Pfeilgruppen über/unter Input */
     align-items: center;
 }
 
@@ -250,6 +263,17 @@ input[type="number"] {
     margin: 0 5px;
 }
 
+/* Styling for Current Remaining Time on Admin Page */
+#current-remaining-time {
+    font-size: 4em; /* Match the size of total time inputs */
+    font-weight: bold;
+    color: var(--color-countdown-text);
+    text-align: center;
+    margin: 0; /* Remove default paragraph margins */
+    display: block; /* Ensure it takes full width */
+}
+
+
 .edit-hint {
     text-align: center;
     font-size: 0.85em;
@@ -257,25 +281,29 @@ input[type="number"] {
     margin-top: 10px;
 }
 
-/* Vertikale Pfeiltasten */
-.arrow-buttons-vertical {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+/* Pfeiltasten-Gruppen (oben und unten) */
+.arrow-buttons-group-top,
+.arrow-buttons-group-bottom {
+    display: flex; /* Pfeile nebeneinander */
+    gap: 5px; /* Abstand zwischen den Pfeilen */
+    margin: 5px 0; /* Abstand zum Input */
 }
 
-.arrow-buttons-vertical button {
+.arrow-buttons-group-top button,
+.arrow-buttons-group-bottom button {
     background-color: var(--color-background-dark);
     color: var(--color-text-dark);
     border: 1px solid var(--color-border);
     padding: 0 10px;
-    height: 25px; /* Feste Höhe für die Pfeile */
+    height: 30px; /* Feste Höhe für die Pfeile */
     font-size: 1.2em; /* Größe der Pfeilsymbole */
     line-height: 1; /* Vertikale Zentrierung */
     border-radius: 5px;
+    min-width: 40px; /* Mindestbreite für besseres Klickverhalten */
 }
 
-.arrow-buttons-vertical button:hover {
+.arrow-buttons-group-top button:hover,
+.arrow-buttons-group-bottom button:hover {
     background-color: var(--color-border);
     transform: none;
 }
@@ -287,7 +315,7 @@ input[type="number"] {
     align-items: center;
     gap: 15px; /* Abstand zwischen den Buttons */
     margin-top: 20px;
-    flex-wrap: wrap; /* Erlaubt Umbruch auf kleineren Bildschirmen */
+    flex-wrap: wrap;
 }
 
 .section-box #play-pause-button {
@@ -303,7 +331,7 @@ input[type="number"] {
     background-repeat: no-repeat;
     background-position: center;
     background-size: 50%;
-    margin: 0; /* Remove existing margins */
+    margin: 0;
 }
 
 .section-box #play-pause-button:hover {
@@ -335,10 +363,8 @@ input[type="number"] {
     transform: scale(1.05);
 }
 
-
-/* List styles within boxes (Predefined Times, Change Times, Names) */
-.section-box .time-list,
-.section-box .change-time-list {
+/* List styles within boxes (Predefined Times, Names) */
+.section-box .time-list {
     list-style: none;
     padding: 0;
     display: grid;
@@ -347,24 +373,29 @@ input[type="number"] {
     flex-grow: 1;
 }
 
-.section-box .time-list {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+/* Specific styling for predefined-times-list for two columns */
+#predefined-times-list {
+    grid-template-columns: 1fr 1fr; /* Two columns */
+    grid-template-rows: repeat(4, 1fr); /* 4 rows for 8 items */
+    grid-auto-flow: column; /* Fill columns first, then rows */
+    gap: 8px; /* Smaller gap for compact look */
+    margin-top: 10px; /* Adjust top margin for the h4 */
 }
 
-.section-box .change-time-list {
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+#predefined-times-list li button {
+    padding: 8px 5px; /* Smaller padding for smaller buttons */
+    font-size: 0.85em; /* Smaller font size */
+    min-width: 80px; /* Ensure buttons don't get too small */
 }
 
-.section-box .time-list li button,
-.section-box .change-time-list li button {
+
+.section-box .time-list li button {
     width: 100%;
-    padding: 10px 5px;
     border: 1px solid var(--color-border);
     background-color: var(--color-background-light);
     color: var(--color-text-dark);
-    border-radius: 8px; /* Slightly more rounded for buttons */
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 0.9em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -372,8 +403,7 @@ input[type="number"] {
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.section-box .time-list li button:hover,
-.section-box .change-time-list li button:hover {
+.section-box .time-list li button:hover {
     background-color: var(--color-background-dark);
     border-color: var(--color-accent-primary);
     color: var(--color-text-dark);

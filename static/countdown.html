@@ -3,15 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Countdown Anzeige</title>
+    <title>Countdown Display</title>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="manifest" href="/static/manifest.webmanifest">
 </head>
-<body class="countdown-display-active"> <div id="countdown-display-page">
-        <div class="countdown-box">
-            <div id="countdown-display">00:00</div>
+<body class="countdown-display-active">
+    <div id="countdown-display-page">
+        <div class="countdown-box info-box">
+            <p id="countdown-display">00:00.0</p>
         </div>
-        <div class="progress-box">
+
+        <div id="current-name-display-container">
+            <h3 id="current-name-display"></h3>
+        </div>
+
+        <div class="progress-box info-box">
             <div id="progress-bar-container-display">
                 <div id="progress-bar-display"></div>
             </div>
@@ -19,8 +25,9 @@
     </div>
 
     <nav>
-        <a href="/">Zur Startseite</a>
-        <a href="/admin">Zur Administration</a>
+        <a href="/">Home</a>
+        <a href="/admin">Admin</a>
+        <a href="/countdown">Display</a>
     </nav>
 
     <script src="/static/script.js"></script>

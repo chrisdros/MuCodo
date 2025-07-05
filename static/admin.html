@@ -16,34 +16,32 @@
                     <h3>Gesamtzeit</h3>
                     <div class="total-time-input-display">
                         <div class="input-container">
-                            <div class="arrow-buttons-vertical">
+                            <div class="arrow-buttons-group-top">
                                 <button data-action="add-minutes-10">▲▲</button>
                                 <button data-action="add-minutes-1">▲</button>
                             </div>
                             <input type="number" id="minutes-input" value="0" min="0" class="time-digit-input" readonly>
-                            <div class="arrow-buttons-vertical">
-                                <button data-action="sub-minutes-1">▼</button>
+                            <div class="arrow-buttons-group-bottom">
                                 <button data-action="sub-minutes-10">▼▼</button>
+                                <button data-action="sub-minutes-1">▼</button>
                             </div>
                         </div>
                         <span class="time-colon">:</span>
                         <div class="input-container">
-                            <div class="arrow-buttons-vertical">
+                            <div class="arrow-buttons-group-top">
                                 <button data-action="add-seconds-10">▲▲</button>
                                 <button data-action="add-seconds-1">▲</button>
                             </div>
                             <input type="number" id="seconds-input" value="0" min="0" max="59" class="time-digit-input" readonly>
-                            <div class="arrow-buttons-vertical">
-                                <button data-action="sub-seconds-1">▼</button>
+                            <div class="arrow-buttons-group-bottom">
                                 <button data-action="sub-seconds-10">▼▼</button>
+                                <button data-action="sub-seconds-1">▼</button>
                             </div>
                         </div>
                     </div>
                     <p class="edit-hint">Klicken Sie auf die Ziffern, um sie zu bearbeiten.</p>
-                </div>
 
-                <div class="section-box">
-                    <h3>Vordefinierte Zeiten</h3>
+                    <h4>Vordefinierte Zeiten</h4>
                     <ul id="predefined-times-list" class="time-list">
                         </ul>
                 </div>
@@ -58,12 +56,6 @@
                         <button id="play-pause-button"></button>
                         <button id="adjust-time-plus-5s" class="small-arrow-button">▶</button>
                     </div>
-                </div>
-
-                <div class="section-box">
-                    <h3>Änderungszeiten</h3>
-                    <ul id="change-times-list" class="change-time-list">
-                        </ul>
                 </div>
             </div>
 
