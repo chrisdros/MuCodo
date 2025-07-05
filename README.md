@@ -1,6 +1,7 @@
 # MuCodo (Multiple Countdown)
 A multiple count-down app that runs in a browser but does not need the internet and allows to count the time for multiple participants.
 
+```
 ./
 ├── main.py             # FastAPI-Anwendung
 ├── requirements.txt    # Python-Abhängigkeiten
@@ -15,6 +16,7 @@ A multiple count-down app that runs in a browser but does not need the internet 
 │   ├── service-worker.js
 │   └── config.json
 
+```
 
 
 Funktionsweise:
