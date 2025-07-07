@@ -5,6 +5,9 @@ FROM python:3.10-slim-buster
 # Lege das Arbeitsverzeichnis im Container fest
 WORKDIR /app
 
+# Upgrade pip to the latest version
+RUN pip install --no-cache-dir --upgrade pip
+
 # Kopiere die requirements.txt ins Arbeitsverzeichnis
 COPY requirements.txt .
 
