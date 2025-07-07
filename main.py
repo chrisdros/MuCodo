@@ -59,7 +59,7 @@ async def read_root():
     """
     Serves the main countdown page (index.html).
     """
-   logger.info("Anwendung: Kommentar passiert.")
+    logger.info("Anwendung: Kommentar passiert.")
     try:
         return HTMLResponse(STATIC_DIR / "index.html", media_type="text/html")
     except FileNotFoundError:
