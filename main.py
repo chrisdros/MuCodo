@@ -53,7 +53,7 @@ async def health_check():
     logger.info("Anwendung: Health-Check-Endpunkt aufgerufen.")
     return {"status": "ok"}
 
-@app.get("/", response_class=HTMLResponse, summary="Serve the Countdown page")
+@app.get("/", summary="Serve the Countdown page")
 async def read_root():
     """
     Serves the main countdown page (index.html).
