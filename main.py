@@ -53,16 +53,17 @@ async def health_check():
     logger.info("Anwendung: Health-Check-Endpunkt aufgerufen.")
     return {"status": "ok"}
 
-@app.get("/", summary="Serve the Countdown page")
+@app.get("/")
 async def read_root():
+    logger.info("Anwendung: Root-Endpunkt aufgerufen.")
     """
     Serves the main countdown page (index.html).
     """
-    logger.info("Anwendung: Root-Endpunkt aufgerufen.")
+   logger.info("Anwendung: Kommentar passiert.")
     try:
         return HTMLResponse(STATIC_DIR / "index.html", media_type="text/html")
     except FileNotFoundError:
-        logger.error("Anwendung: Die Seite index.html ist nicht zu finden.")
+        logger.info("Anwendung: Die Seite index.html ist nicht zu finden.")
         raise HTTPException(status_code=404, detail="index.html not found.")
 
 @app.get("/countdown", response_class=HTMLResponse, summary="Serve the Countdown display page")
