@@ -47,6 +47,12 @@ if not CONFIG_FILE_PATH.exists():
 # Statische Dateien bereitstellen (HTML, CSS, JS, Manifest etc.)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
+# Ein dedizierter Health-Check-Endpunkt
+@app.get("/health")
+async def health_check():
+    logger.info("Anwendung: Health-Check-Endpunkt aufgerufen.")
+    return {"status": "ok"}
+
 @app.get("/", response_class=HTMLResponse, summary="Serve the Countdown page")
 async def read_root():
     """
