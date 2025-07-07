@@ -4,12 +4,19 @@ from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 import json
+import logging
 
+# Konfigurieren Sie das Logging
+logging.basicConfig(level=logging.INFO) # INFO ist gut, DEBUG für noch mehr Details
+logger = logging.getLogger(__name__)
+
+logger.info("Anwendung: Initialisiere FastAPI App...")
 app = FastAPI(
     title="Countdown Timer API",
     description="API for the Countdown Timer application, managing static files and config.json.",
     version="1.0.0"
 )
+logger.info("Anwendung: FastAPI App ist initialisiert!")
 
 # Pfad zum statischen Verzeichnis
 STATIC_DIR = Path("static")
@@ -19,19 +26,21 @@ CONFIG_FILE_PATH = STATIC_DIR / "config.json"
 STATIC_DIR.mkdir(parents=True, exist_ok=True)
 
 # Sicherstellen, dass eine Standard-config.json existiert, falls nicht vorhanden
+logger.info("Anwendung: Wenn keine Config-Datei vorhanden, wird sie jetzt erzeugt")
 if not CONFIG_FILE_PATH.exists():
     default_config = {
         "predefinedTimes": ["0:30","1:00","2:30","4:00","5:00","6:00","8:00","106:00"],
         "changeTimes": ["0:30","0:10","0:05","-0:05","-0:10","-0:30"] ,
         "names": [
-            "Arndt Abel",
-            "Bernd Brugger",
-            "Christian Colewsky",
-            "Dieter Drews"
+            "Arndt A.",
+            "Bernd B.",
+            "Christian C.",
+            "Dieter D."
         ]
     }
     with open(CONFIG_FILE_PATH, "w", encoding="utf-8") as f:
         json.dump(default_config, f, indent=2, ensure_ascii=False)
+        logger.info("Anwendung: Standard config-Datei erzeugt.")
     print("Default config.json created.")
 
 
@@ -43,9 +52,11 @@ async def read_root():
     """
     Serves the main countdown page (index.html).
     """
+    logger.info("Anwendung: Root-Endpunkt aufgerufen.")
     try:
         return FileResponse(STATIC_DIR / "index.html", media_type="text/html")
     except FileNotFoundError:
+        logger.error("Anwendung: Die Seite index.html ist nicht zu finden.")
         raise HTTPException(status_code=404, detail="index.html not found.")
 
 @app.get("/countdown", response_class=HTMLResponse, summary="Serve the Countdown display page")
