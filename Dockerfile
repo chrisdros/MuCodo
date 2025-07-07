@@ -22,6 +22,7 @@ COPY static/ /app/static/
 EXPOSE 8000
 
 # Definiere den Befehl zum Starten der FastAPI-Anwendung mit Uvicorn
-# --host 0.0.0.0 ist wichtig, damit die Anwendung von außen erreichbar ist
 ENTRYPOINT ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# --host 0.0.0.0 ist wichtig, damit die Anwendung von außen erreichbar ist
+
 
