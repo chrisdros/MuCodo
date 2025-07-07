@@ -60,7 +60,7 @@ async def read_root():
     """
     logger.info("Anwendung: Root-Endpunkt aufgerufen.")
     try:
-        return FileResponse(STATIC_DIR / "index.html", media_type="text/html")
+        return HTMLResponse(STATIC_DIR / "index.html", media_type="text/html")
     except FileNotFoundError:
         logger.error("Anwendung: Die Seite index.html ist nicht zu finden.")
         raise HTTPException(status_code=404, detail="index.html not found.")
