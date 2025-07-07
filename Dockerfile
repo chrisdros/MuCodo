@@ -15,8 +15,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Kopiere die main.py und den gesamten statischen Ordner
-COPY main.py .
-COPY static/ ./static/
+COPY main.py /app
+COPY static/ /app/static/
 
 # Exponiere den Port, auf dem Uvicorn läuft
 EXPOSE 8000
