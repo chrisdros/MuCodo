@@ -1,8 +1,5 @@
-const CACHE_NAME = 'countdown-timer-v15'; // Cache-Version erhöht
+const CACHE_NAME = 'countdown-timer-v16'; // Cache-Version erhöht
 const urlsToCache = [
-    '/',
-    '/countdown',
-    '/admin',
     '/static/index.html',
     '/static/countdown.html',
     '/static/admin.html',
