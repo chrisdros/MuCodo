@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 import json
 import logging
+import os
 
 # Konfigurieren Sie das Logging
 logging.basicConfig(level=logging.INFO) # INFO ist gut, DEBUG für noch mehr Details
@@ -50,10 +51,11 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 # Ein dedizierter Health-Check-Endpunkt
 @app.get("/health")
 async def health_check():
+    debug_level = os.getenv("LOGLEVEL","ERROR");
     logger.info("Anwendung: Health-Check-Endpunkt aufgerufen.")
-    return {"status": "ok"}
+    return {"status": debug_level}
 
-@app.get("/", response_class=HTMLResponse, summary="Serve the Countdown base page")
+@app.get("/") #, response_class=HTMLResponse, summary="Serve the Countdown base page")
 async def read_root():
     logger.info("Anwendung: Root-Endpunkt aufgerufen.")
     """
