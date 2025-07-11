@@ -53,7 +53,7 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 async def health_check():
     debug_level = os.getenv("LOGLEVEL","INFO")
     logger.info("Anwendung: Health-Check-Endpunkt aufgerufen.")
-    return {"status": debug_level}
+    return {"status": "OK"}
 
 @app.get("/") #, response_class=HTMLResponse, summary="Serve the Countdown base page")
 async def read_root():
