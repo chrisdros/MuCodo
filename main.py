@@ -49,9 +49,9 @@ if not CONFIG_FILE_PATH.exists():
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # Ein dedizierter Health-Check-Endpunkt
-@app.get("/health")
+@app.get("/app-health")
 async def health_check():
-    debug_level = os.getenv("LOGLEVEL","ERROR");
+    debug_level = os.getenv("LOGLEVEL","INFO")
     logger.info("Anwendung: Health-Check-Endpunkt aufgerufen.")
     return {"status": debug_level}
 
